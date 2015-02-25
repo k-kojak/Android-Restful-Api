@@ -1,0 +1,8 @@
+*
+!*/
+
+!libs/
+!src/
+
+!build.gradle
+!.gitignore

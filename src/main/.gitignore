@@ -1,0 +1,10 @@
+*
+!*/
+
+!**.xml
+!**.png
+!**.java
+!**.php
+!php/.htaccess
+
+!.gitignore
