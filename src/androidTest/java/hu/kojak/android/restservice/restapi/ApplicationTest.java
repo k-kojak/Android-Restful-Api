@@ -1,4 +1,4 @@
-package hu.kojak.android.restapi.restapi;
+package hu.kojak.android.restservice.restapi;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
