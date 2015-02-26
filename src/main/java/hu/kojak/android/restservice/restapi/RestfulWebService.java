@@ -2,6 +2,7 @@ package hu.kojak.android.restservice.restapi;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -10,6 +11,8 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 
 public class RestfulWebService {
+
+  private static final String INCONSISTENT_REST_API_CLASS = "Rest api interface changed, but must be the same through the whole app lifecycle!";
 
   private static String ENDPOINT = null;
 
@@ -31,13 +34,19 @@ public class RestfulWebService {
       }
     };
 
+    private static Class sRequestedClass = null;
+
     private static Object INSTANCE = null;
 
     private synchronized static void createInstance(Class restClass) {
       if (ENDPOINT == null) {
-        throw new RuntimeException("Endpoint is not set. Call setEndpoint with a nonNull value before instance creation.");
+        throw new RuntimeException("Endpoint is not set. This should be the first step!");
+      }
+      if (sRequestedClass != null && !sRequestedClass.equals(restClass)) {
+        throw new RuntimeException(INCONSISTENT_REST_API_CLASS);
       }
       if (INSTANCE == null) {
+        sRequestedClass = restClass;
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(ENDPOINT)
                 .setRequestInterceptor(interceptor)
@@ -75,17 +84,19 @@ public class RestfulWebService {
    * @param endPoint the endpoint uri
    */
   public static void setEndpoint(String endPoint) {
-    ENDPOINT = endPoint;
+    if (ENDPOINT == null) {
+      ENDPOINT = endPoint;
+    }
   }
 
-  @SuppressWarnings("unchecked")
+
   private synchronized static<T> T getService(Class<T> restClass) {
-    if (ServiceHolder.INSTANCE == null) {
-      ServiceHolder.createInstance(restClass);
-    } else if (!ServiceHolder.INSTANCE.getClass().equals(restClass)) {
-      throw new RuntimeException("Rest api interface changed, but must be the same through the whole app lifecycle!");
+    ServiceHolder.createInstance(restClass);
+    try {
+      return (T) ServiceHolder.INSTANCE;
+    } catch (ClassCastException e) {
+      throw new RuntimeException(INCONSISTENT_REST_API_CLASS);
     }
-    return (T) ServiceHolder.INSTANCE;
   }
 
   /**
