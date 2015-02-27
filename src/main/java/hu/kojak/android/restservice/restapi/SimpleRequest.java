@@ -3,14 +3,14 @@ package hu.kojak.android.restservice.restapi;
 
 import android.content.Context;
 
-public abstract class SimpleRequest<T, U> extends IRequest<T, U> {
+public abstract class SimpleRequest<Return, RestInterface> extends IRequest<Return, RestInterface> {
 
-  public SimpleRequest(Class<U> restClass) {
+  public SimpleRequest(Class<RestInterface> restClass) {
     super(restClass);
   }
 
   @Override
-  public void onPostExecute(Context context, T result) {
+  public void onPostExecute(Context context, Return result) {
   }
 
   @Override

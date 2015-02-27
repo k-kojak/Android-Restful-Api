@@ -2,18 +2,18 @@ package hu.kojak.android.restservice.restapi;
 
 import android.content.Context;
 
-public abstract class IRequest<T, U> {
+public abstract class IRequest<Return, RestInterface> {
 
-  private final Class<U> mRestClass;
+  private final Class<RestInterface> mRestClass;
 
-  public IRequest(Class<U> restClass) {
-    if (restClass == null) {
+  public IRequest(Class<RestInterface> restInterfaceClass) {
+    if (restInterfaceClass == null) {
       throw new RuntimeException("Parameter cannot be null");
     }
-    mRestClass = restClass;
+    mRestClass = restInterfaceClass;
   }
 
-  final Class<U> getRestClass() {
+  final Class<RestInterface> getRestClass() {
     return mRestClass;
   }
 
@@ -21,7 +21,7 @@ public abstract class IRequest<T, U> {
    * Runs the request with the given restService.
    * @return
    */
-  public abstract T run(Context context, U restService) throws Exception;
+  public abstract Return run(Context context, RestInterface restService) throws Exception;
 
   /**
    * Called after a request finished successfully and no error occured.
@@ -30,7 +30,7 @@ public abstract class IRequest<T, U> {
    * @param context
    * @param result
    */
-  public abstract void onPostExecute(Context context, T result);
+  public abstract void onPostExecute(Context context, Return result);
 
   /**
    * Called when the request was cancelled.
