@@ -12,8 +12,6 @@ class ExampleClass {
   }
 }
   
-
-
 $exampleFunction = function($args, $data) {
   $klass = new ExampleClass();
   $klass->a = $args;

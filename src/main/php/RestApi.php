@@ -67,9 +67,7 @@ class WebService {
     if ($callback === FALSE) {
       return $this->_response("Uri not found: $this->pureRequest", 404);
     } else {
-      // From client side you need to pass an object with 1 member, named "jsonData"
-      $jsonData = $this->data->jsonData;
-      return $this->_response($callback($this->args, json_decode($jsonData)));
+        return $this->_response($callback($this->args, $this->data));
     }
   }
 
