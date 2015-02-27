@@ -16,8 +16,6 @@ public class RestfulWebService {
 
   private static String ENDPOINT = null;
 
-  private static IEncryptor sEncryptor = null;
-
   private static IRequest sCurrentQuery = null;
 
   private static Queue<QueryRunner> sRequestQueue = new ArrayDeque<>();
@@ -63,21 +61,6 @@ public class RestfulWebService {
 
   private RestfulWebService() {}
 
-  /**
-   * Sets an encryptor for data encryption and decryption.
-   * @param encryptor the encryptor to set
-   */
-  public static void setEncryptor(IEncryptor encryptor) {
-    sEncryptor = encryptor;
-  }
-
-  /**
-   * Returns the encryptor which is set to the WebService, null if not set.
-   * @return
-   */
-  public static IEncryptor getEncryptor() {
-    return sEncryptor;
-  }
 
   /**
    * Sets the endpoint of the RestApi calls.

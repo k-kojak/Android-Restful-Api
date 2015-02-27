@@ -1,0 +1,7 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /~kojak/restapi_test/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule v1/(.*)$ v1/ExampleApi.php?request=$1 [QSA,NC,L]
+</IfModule>
