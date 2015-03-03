@@ -2,83 +2,99 @@ package hu.kojak.android.restservice.restapi;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.converter.Converter;
 
-public class RestfulWebService {
-
-  private static final String INCONSISTENT_REST_API_CLASS = "Rest api interface changed, but must be the same through the whole app lifecycle!";
-
-  private static String ENDPOINT = null;
+public class RestfulWebService<T> {
 
   private static IRequest sCurrentQuery = null;
-
   private static Queue<QueryRunner> sRequestQueue = new ArrayDeque<>();
+  private static RestfulWebService<?> INSTANCE = null;
 
+  private final T mRestInterface;
 
-  private static class ServiceHolder {
-
-    private static final RequestInterceptor interceptor = new RequestInterceptor() {
-      @Override
-      public void intercept(RequestFacade request) {
-        request.addHeader("Charset", "UTF-8");
-        request.addHeader("Content-Type", "application/json");
-        request.addHeader("Accept-Encoding", "gzip");
-      }
-    };
-
-    private static Class sRequestedClass = null;
-
-    private static Object INSTANCE = null;
-
-    private synchronized static void createInstance(Class restClass) {
-      if (ENDPOINT == null) {
-        throw new RuntimeException("Endpoint is not set. This should be the first step!");
-      }
-      if (sRequestedClass != null && !sRequestedClass.equals(restClass)) {
-        throw new RuntimeException(INCONSISTENT_REST_API_CLASS);
-      }
-      if (INSTANCE == null) {
-        sRequestedClass = restClass;
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(ENDPOINT)
-                .setRequestInterceptor(interceptor)
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .build();
-        INSTANCE = restAdapter.create(restClass);
-      }
+  private RestfulWebService(String endPoint,
+                            Class<T> restInterface,
+                            Converter converter,
+                            RequestInterceptor interceptor) {
+    if (endPoint == null) {
+      throw new RuntimeException("Endpoint cannot be null.");
+    }
+    if (restInterface == null) {
+      throw new RuntimeException("RestInterface cannot be null.");
     }
 
-    private ServiceHolder() {
+    RestAdapter.Builder restAdapter = new RestAdapter.Builder()
+            .setEndpoint(endPoint)
+            .setLogLevel(RestAdapter.LogLevel.FULL)
+            .setRequestInterceptor(interceptor);
+
+    if (converter != null) {
+      restAdapter.setConverter(converter);
+    }
+    if (interceptor != null) {
+      restAdapter.setRequestInterceptor(interceptor);
+    }
+
+    mRestInterface = restAdapter.build().create(restInterface);
+  }
+
+
+  private static synchronized<T> void createInstance(String endPoint,
+                                                     Class<T> restInterface,
+                                                     Converter converter,
+                                                     RequestInterceptor interceptor) {
+    if (INSTANCE != null) {
+      throw new RuntimeException("Instance already created, cannot create it more than once.");
+    } else {
+      INSTANCE = new RestfulWebService<>(endPoint, restInterface, converter, interceptor);
+    }
+  }
+
+  public static class Builder<T> {
+    private String endPoint = null;
+    private Class<T> restInterface = null;
+    private Converter converter = null;
+    private RequestInterceptor interceptor = null;
+
+    public Builder(String endPoint, Class<T> restInterface) {
+      this.endPoint = endPoint;
+      this.restInterface = restInterface;
+    }
+
+    public Builder setConverter(Converter converter) {
+      this.converter = converter;
+      return this;
+    }
+
+    public Builder setInterceptor(RequestInterceptor interceptor) {
+      this.interceptor = interceptor;
+      return this;
+    }
+
+    public void build() {
+      RestfulWebService.createInstance(endPoint, restInterface, converter, interceptor);
     }
 
   }
 
-  private RestfulWebService() {}
 
-
-  /**
-   * Sets the endpoint of the RestApi calls.
-   * @param endPoint the endpoint uri
-   */
-  public static void setEndpoint(String endPoint) {
-    if (ENDPOINT == null) {
-      ENDPOINT = endPoint;
-    }
-  }
-
-
+  @SuppressWarnings("unchecked")
   private synchronized static<T> T getService(Class<T> restClass) {
-    ServiceHolder.createInstance(restClass);
+    if (INSTANCE == null) {
+      throw new RuntimeException("RestfulWebservice is not instantiated. Call Builder.build() first.");
+    }
     try {
-      return (T) ServiceHolder.INSTANCE;
+      return (T) INSTANCE.mRestInterface;
     } catch (ClassCastException e) {
-      throw new RuntimeException(INCONSISTENT_REST_API_CLASS);
+      throw new RuntimeException("Incompatible rest interface, expected: "
+              + restClass.getClass().getName()
+              + ", but found: " + INSTANCE.mRestInterface.getClass().getName());
     }
   }
 
@@ -87,13 +103,15 @@ public class RestfulWebService {
    * If addToQueue is set to true and a request is already running
    * then appends the request to waiting queue for later run.
    *
-   * @param context
+   * @param context context object
    * @param query the query to run against the server
    * @param addToQueue if true and a query is already running adds this query to run later, otherwise the query will
    *                   be rejected
    * @param <Return> the return type of the run thread
    */
-  public static synchronized <Return, RestInterface> void runQuery(Context context, IRequest<Return, RestInterface> query, boolean addToQueue) {
+  public static synchronized <Return, RestInterface> void runQuery(Context context,
+                                                                   IRequest<Return, RestInterface> query,
+                                                                   boolean addToQueue) {
     if (sCurrentQuery != null) {
       if (addToQueue) {
         sRequestQueue.add(new QueryRunner<>(context, query));
@@ -111,7 +129,7 @@ public class RestfulWebService {
    * Runs the {@link #runQuery(android.content.Context, IRequest, boolean)}
    * method with false <code>addToQueue</code> parameter.
    *
-   * @param context
+   * @param context context object
    * @param query the query to run against the server
    * @param <Return> the return type of the run thread
    */
