@@ -31,8 +31,7 @@ public class RestfulWebService<T> {
 
     RestAdapter.Builder restAdapter = new RestAdapter.Builder()
             .setEndpoint(endPoint)
-            .setLogLevel(RestAdapter.LogLevel.FULL)
-            .setRequestInterceptor(interceptor);
+            .setLogLevel(RestAdapter.LogLevel.FULL);
 
     if (converter != null) {
       restAdapter.setConverter(converter);
@@ -57,23 +56,24 @@ public class RestfulWebService<T> {
   }
 
   public static class Builder<T> {
-    private String endPoint = null;
-    private Class<T> restInterface = null;
-    private Converter converter = null;
+    private final String endPoint;
+    private final Class<T> restInterface;
+
     private RequestInterceptor interceptor = null;
+    private Converter converter = null;
 
     public Builder(String endPoint, Class<T> restInterface) {
       this.endPoint = endPoint;
       this.restInterface = restInterface;
     }
 
-    public Builder setConverter(Converter converter) {
-      this.converter = converter;
+    public Builder setInterceptor(RequestInterceptor interceptor) {
+      this.interceptor = interceptor;
       return this;
     }
 
-    public Builder setInterceptor(RequestInterceptor interceptor) {
-      this.interceptor = interceptor;
+    public Builder setConverter(Converter converter) {
+      this.converter = converter;
       return this;
     }
 
