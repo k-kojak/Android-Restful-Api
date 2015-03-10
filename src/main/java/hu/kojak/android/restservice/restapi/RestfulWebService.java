@@ -141,7 +141,7 @@ public class RestfulWebService<T> {
    * Returns the String ID of the currently running query.
    * A query is in running state while it is in the run method. After returning from run(),
    * the query is not in running state anymore.
-   * 
+   *
    * This function returns null in 2 cases: if there is no query running currently,
    * or if the query did not specified an id.
    * @return the ID of the currently running query.
