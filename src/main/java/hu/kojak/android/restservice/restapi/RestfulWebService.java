@@ -137,6 +137,20 @@ public class RestfulWebService<T> {
     runQuery(context, query, false);
   }
 
+  /**
+   * Returns the String ID of the currently running query.
+   * This function returns null in 2 cases: if there is no query running currently,
+   * or if the query did not specified an id.
+   * @return the ID of the currently running query.
+   */
+  public static String getCurrentQueryId() {
+    if (sCurrentQuery != null) {
+      return sCurrentQuery.getQueryID();
+    } else {
+      return null;
+    }
+  }
+
   private static class QueryRunner<Result, RestInterface> extends AsyncTask<Void, Void, Result> {
 
     private final Context mContext;

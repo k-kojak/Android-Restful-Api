@@ -6,7 +6,11 @@ import android.content.Context;
 public abstract class SimpleRequest<Return, RestInterface> extends IRequest<Return, RestInterface> {
 
   public SimpleRequest(Class<RestInterface> restClass) {
-    super(restClass);
+    this(restClass, null);
+  }
+
+  public SimpleRequest(Class<RestInterface> restClass, String queryID) {
+    super(restClass, queryID);
   }
 
   @Override

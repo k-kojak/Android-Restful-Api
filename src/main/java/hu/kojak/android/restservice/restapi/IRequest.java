@@ -5,16 +5,22 @@ import android.content.Context;
 public abstract class IRequest<Return, RestInterface> {
 
   private final Class<RestInterface> mRestClass;
+  private final String mQueryID;
 
-  public IRequest(Class<RestInterface> restInterfaceClass) {
+  public IRequest(Class<RestInterface> restInterfaceClass, String queryID) {
     if (restInterfaceClass == null) {
       throw new RuntimeException("Parameter cannot be null");
     }
     mRestClass = restInterfaceClass;
+    mQueryID = queryID;
   }
 
   final Class<RestInterface> getRestClass() {
     return mRestClass;
+  }
+
+  final String getQueryID() {
+    return mQueryID;
   }
 
   /**
