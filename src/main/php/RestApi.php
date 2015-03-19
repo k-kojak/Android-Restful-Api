@@ -28,6 +28,8 @@ class WebService {
   private $delete = array();
   
   private $pureRequest = '';
+  
+  private $decoder = FALSE;
 
   public function __construct($request) {
     header("Content-Type: application/json");
@@ -67,7 +69,14 @@ class WebService {
     if ($callback === FALSE) {
       return $this->_response("Uri not found: $this->pureRequest", 404);
     } else {
-        return $this->_response($callback($this->args, $this->data));
+      
+      if ($this->decoder !== FALSE) {
+        $func = $this->decoder;
+        $param_data = $func($this->data);
+      } else {
+        $param_data = $this->data;
+      }
+      return $this->_response($callback($this->args, $param_data));
     }
   }
 
@@ -105,6 +114,10 @@ class WebService {
         500 => 'Internal Server Error',
     );
     return ($status[$code]) ? $status[$code] : $status[500];
+  }
+  
+  public function setDecoder($func) {
+    $this->decoder = $func;
   }
   
   public function get($path, $func) {
