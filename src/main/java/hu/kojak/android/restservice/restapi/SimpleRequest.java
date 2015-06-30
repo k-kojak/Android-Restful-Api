@@ -3,7 +3,8 @@ package hu.kojak.android.restservice.restapi;
 
 import android.content.Context;
 
-public abstract class SimpleRequest<Return, RestInterface> extends IRequest<Return, RestInterface> {
+public abstract class SimpleRequest<Progress, Return, RestInterface>
+        extends IRequest<Progress, Return, RestInterface> {
 
   public SimpleRequest(Class<RestInterface> restClass) {
     this(restClass, null);

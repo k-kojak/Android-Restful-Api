@@ -2,10 +2,11 @@ package hu.kojak.android.restservice.restapi;
 
 import android.content.Context;
 
-public abstract class IRequest<Return, RestInterface> {
+public abstract class IRequest<Progress, Return, RestInterface> {
 
   private final Class<RestInterface> mRestClass;
   private final String mQueryID;
+  private RestfulWebService.QueryRunner.ProgressDelegate<Progress> mProgressDelegate;
 
   public IRequest(Class<RestInterface> restInterfaceClass, String queryID) {
     if (restInterfaceClass == null) {
@@ -68,6 +69,16 @@ public abstract class IRequest<Return, RestInterface> {
    * @param context
    */
   public abstract void onQueue(Context context);
+
+
+  protected final void publishProgress(Progress progress) {
+    mProgressDelegate.publish(progress);
+  }
+
+
+  protected void setProgressDelegate(RestfulWebService.QueryRunner.ProgressDelegate<Progress> delegate) {
+    mProgressDelegate = delegate;
+  }
 
 
 }

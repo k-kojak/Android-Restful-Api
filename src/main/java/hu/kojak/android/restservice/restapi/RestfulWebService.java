@@ -109,8 +109,8 @@ public class RestfulWebService<T> {
    *                   be rejected
    * @param <Return> the return type of the run thread
    */
-  public static synchronized <Return, RestInterface> void runQuery(Context context,
-                                                                   IRequest<Return, RestInterface> query,
+  public static synchronized <Progress, Return, RestInterface> void runQuery(Context context,
+                                                                   IRequest<Progress, Return, RestInterface> query,
                                                                    boolean addToQueue) {
     if (sCurrentQuery != null) {
       if (addToQueue) {
@@ -133,7 +133,7 @@ public class RestfulWebService<T> {
    * @param query the query to run against the server
    * @param <Return> the return type of the run thread
    */
-  public static synchronized <Return, RestInterface> void runQuery(Context context, IRequest<Return, RestInterface> query) {
+  public static synchronized <Progress, Return, RestInterface> void runQuery(Context context, IRequest<Progress, Return, RestInterface> query) {
     runQuery(context, query, false);
   }
 
@@ -154,15 +154,22 @@ public class RestfulWebService<T> {
     }
   }
 
-  private static class QueryRunner<Result, RestInterface> extends AsyncTask<Void, Void, Result> {
+  protected static class QueryRunner<Progress, Result, RestInterface>
+          extends AsyncTask<Void, Progress, Result> {
 
     private final Context mContext;
-    private final IRequest<Result, RestInterface> mQuery;
+    private final IRequest<Progress, Result, RestInterface> mQuery;
     private Exception mException = null;
 
-    public QueryRunner(Context context, IRequest<Result, RestInterface> query) {
+    public QueryRunner(Context context, IRequest<Progress, Result, RestInterface> query) {
       mContext = context;
       mQuery = query;
+      query.setProgressDelegate(new ProgressDelegate<Progress>() {
+        @Override
+        public void publish(Progress progress) {
+          publishProgress(progress);
+        }
+      });
     }
 
     @Override
@@ -205,11 +212,16 @@ public class RestfulWebService<T> {
     private static synchronized void finished() {
       sCurrentQuery = null;
       if (!sRequestQueue.isEmpty()) {
-        QueryRunner<?, ?> runner = sRequestQueue.poll();
+        QueryRunner<?, ?, ?> runner = sRequestQueue.poll();
         sCurrentQuery = runner.mQuery;
         runner.execute();
       }
     }
+
+    protected interface ProgressDelegate<Progress> {
+      void publish(Progress progress);
+    }
+
   }
 
 }
