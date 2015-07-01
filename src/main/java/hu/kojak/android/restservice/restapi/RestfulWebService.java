@@ -12,16 +12,15 @@ import retrofit.converter.Converter;
 
 public class RestfulWebService<T> {
 
-  private static IRequest sCurrentQuery = null;
-  private static Queue<QueryRunner> sRequestQueue = new ArrayDeque<>();
+  protected static IRequest sCurrentQuery = null;
+  protected static Queue<QueryRunner> sRequestQueue = new ArrayDeque<>();
   private static RestfulWebService<?> INSTANCE = null;
 
   private final T mRestInterface;
 
-  private RestfulWebService(String endPoint,
-                            Class<T> restInterface,
-                            Converter converter,
-                            RequestInterceptor interceptor) {
+  private RestfulWebService(String endPoint, Class<T> restInterface,
+                            Converter converter, RequestInterceptor interceptor) {
+
     if (endPoint == null) {
       throw new RuntimeException("Endpoint cannot be null.");
     }
@@ -85,7 +84,7 @@ public class RestfulWebService<T> {
 
 
   @SuppressWarnings("unchecked")
-  private synchronized static<T> T getService(Class<T> restClass) {
+  protected synchronized static<T> T getService(Class<T> restClass) {
     if (INSTANCE == null) {
       throw new RuntimeException("RestfulWebservice is not instantiated. Call Builder.build() first.");
     }
@@ -154,74 +153,79 @@ public class RestfulWebService<T> {
     }
   }
 
-  protected static class QueryRunner<Progress, Result, RestInterface>
-          extends AsyncTask<Void, Progress, Result> {
-
-    private final Context mContext;
-    private final IRequest<Progress, Result, RestInterface> mQuery;
-    private Exception mException = null;
-
-    public QueryRunner(Context context, IRequest<Progress, Result, RestInterface> query) {
-      mContext = context;
-      mQuery = query;
-      query.setProgressDelegate(new ProgressDelegate<Progress>() {
-        @Override
-        public void publish(Progress progress) {
-          publishProgress(progress);
-        }
-      });
-    }
-
-    @Override
-    protected Result doInBackground(Void... params) {
-      try {
-        return mQuery.run(mContext, getService(mQuery.getRestClass()));
-      } catch (Exception error) {
-        mException = error;
-        cancel(true);
-      }
-      return null;
-    }
-
-    @Override
-    protected void onPostExecute(Result result) {
-      finished();
-      mQuery.onPostExecute(mContext, result);
-    }
-
-    @Override
-    protected void onCancelled() {
-      cancelled();
-    }
-
-    @Override
-    protected void onCancelled(Result result) {
-      cancelled();
-    }
-
-    private void cancelled() {
-      finished();
-      if (mException != null) {
-        mQuery.onException(mContext, mException);
-      } else {
-        mQuery.onCancelled(mContext);
-      }
-
-    }
-
-    private static synchronized void finished() {
-      sCurrentQuery = null;
-      if (!sRequestQueue.isEmpty()) {
-        QueryRunner<?, ?, ?> runner = sRequestQueue.poll();
-        sCurrentQuery = runner.mQuery;
-        runner.execute();
-      }
-    }
-
-    protected interface ProgressDelegate<Progress> {
-      void publish(Progress progress);
-    }
-
-  }
+//  protected static class QueryRunner<Progress, Result, RestInterface>
+//          extends AsyncTask<Void, Progress, Result> {
+//
+//    private final Context mContext;
+//    private final IRequest<Progress, Result, RestInterface> mQuery;
+//    private Exception mException = null;
+//
+//    public QueryRunner(Context context, IRequest<Progress, Result, RestInterface> query) {
+//      mContext = context;
+//      mQuery = query;
+//      query.setProgressDelegate(new ProgressDelegate<Progress>() {
+//        @Override
+//        public void publish(Progress progress) {
+//          publishProgress(progress);
+//        }
+//      });
+//    }
+//
+//    @Override
+//    protected Result doInBackground(Void... params) {
+//      try {
+//        return mQuery.run(mContext, getService(mQuery.getRestClass()));
+//      } catch (Exception error) {
+//        mException = error;
+//        cancel(true);
+//      }
+//      return null;
+//    }
+//
+//    @Override
+//    protected void onPostExecute(Result result) {
+//      finished();
+//      mQuery.onPostExecute(mContext, result);
+//    }
+//
+//    @Override
+//    protected void onCancelled() {
+//      cancelled();
+//    }
+//
+//    @Override
+//    protected void onCancelled(Result result) {
+//      cancelled();
+//    }
+//
+//    @Override
+//    protected void onProgressUpdate(Progress... values) {
+//      mQuery.onProgressUpdate(values[0]);
+//    }
+//
+//    private void cancelled() {
+//      finished();
+//      if (mException != null) {
+//        mQuery.onException(mContext, mException);
+//      } else {
+//        mQuery.onCancelled(mContext);
+//      }
+//
+//    }
+//
+//    private static synchronized void finished() {
+//      sCurrentQuery = null;
+//      if (!sRequestQueue.isEmpty()) {
+//        QueryRunner<?, ?, ?> runner = sRequestQueue.poll();
+//        sCurrentQuery = runner.mQuery;
+//        runner.execute();
+//      }
+//    }
+//
+//    protected interface ProgressDelegate<Progress> {
+//      void publish(Progress progress);
+//    }
+//
+//  }
 
 }

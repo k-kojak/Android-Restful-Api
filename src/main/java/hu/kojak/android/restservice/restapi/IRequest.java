@@ -6,7 +6,7 @@ public abstract class IRequest<Progress, Return, RestInterface> {
 
   private final Class<RestInterface> mRestClass;
   private final String mQueryID;
-  private RestfulWebService.QueryRunner.ProgressDelegate<Progress> mProgressDelegate;
+  private QueryRunner.ProgressDelegate<Progress> mProgressDelegate;
 
   public IRequest(Class<RestInterface> restInterfaceClass, String queryID) {
     if (restInterfaceClass == null) {
@@ -26,7 +26,6 @@ public abstract class IRequest<Progress, Return, RestInterface> {
 
   /**
    * Runs the request with the given restService.
-   * @return
    */
   public abstract Return run(Context context, RestInterface restService) throws Exception;
 
@@ -34,8 +33,6 @@ public abstract class IRequest<Progress, Return, RestInterface> {
    * Called after a request finished successfully and no error occured.
    *
    * Runs on UI thread.
-   * @param context
-   * @param result
    */
   public abstract void onPostExecute(Context context, Return result);
 
@@ -59,24 +56,23 @@ public abstract class IRequest<Progress, Return, RestInterface> {
   /**
    * Called if a retrofit error occured while executing request.
    * This method is called on the UI thread.
-   * @param context
-   * @param error
    */
   public abstract void onException(Context context, Exception error);
 
   /**
    * Called when query is not available to run immediately and added to waiting queue.
-   * @param context
    */
   public abstract void onQueue(Context context);
 
+
+  public abstract void onProgressUpdate(Progress progress);
 
   protected final void publishProgress(Progress progress) {
     mProgressDelegate.publish(progress);
   }
 
 
-  protected void setProgressDelegate(RestfulWebService.QueryRunner.ProgressDelegate<Progress> delegate) {
+  void setProgressDelegate(QueryRunner.ProgressDelegate<Progress> delegate) {
     mProgressDelegate = delegate;
   }
 

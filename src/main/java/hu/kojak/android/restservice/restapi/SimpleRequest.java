@@ -31,6 +31,10 @@ public abstract class SimpleRequest<Progress, Return, RestInterface>
   }
 
   @Override
+  public void onProgressUpdate(Progress progress) {
+  }
+
+  @Override
   public void onQueue(Context context) {
   }
 
