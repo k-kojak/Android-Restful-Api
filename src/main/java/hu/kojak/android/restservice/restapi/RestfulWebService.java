@@ -1,10 +1,6 @@
 package hu.kojak.android.restservice.restapi;
 
 import android.content.Context;
-import android.os.AsyncTask;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -12,8 +8,8 @@ import retrofit.converter.Converter;
 
 public class RestfulWebService<T> {
 
-  protected static IRequest sCurrentQuery = null;
-  protected static Queue<QueryRunner> sRequestQueue = new ArrayDeque<>();
+//  static Request sCurrentRequest = null;
+//  protected static Queue<Request> sRequestQueue = new ArrayDeque<>();
   private static RestfulWebService<?> INSTANCE = null;
 
   private final T mRestInterface;
@@ -30,7 +26,7 @@ public class RestfulWebService<T> {
 
     RestAdapter.Builder restAdapter = new RestAdapter.Builder()
             .setEndpoint(endPoint)
-            .setLogLevel(RestAdapter.LogLevel.FULL);
+            /*.setLogLevel(RestAdapter.LogLevel.FULL)*/;
 
     if (converter != null) {
       restAdapter.setConverter(converter);
@@ -108,33 +104,33 @@ public class RestfulWebService<T> {
    *                   be rejected
    * @param <Return> the return type of the run thread
    */
-  public static synchronized <Progress, Return, RestInterface> void runQuery(Context context,
-                                                                   IRequest<Progress, Return, RestInterface> query,
-                                                                   boolean addToQueue) {
-    if (sCurrentQuery != null) {
-      if (addToQueue) {
-        sRequestQueue.add(new QueryRunner<>(context, query));
-        query.onQueue(context);
-      } else {
-        query.onReject(context);
-      }
-    } else {
-      sCurrentQuery = query;
-      new QueryRunner<>(context, query).execute();
-    }
-  }
+//  public static synchronized <Progress, Return, RestInterface> void runQuery(Context context,
+//                                                                   Request<Progress, Return, RestInterface> query,
+//                                                                   boolean addToQueue) {
+//    if (sCurrentRequest != null) {
+//      if (addToQueue) {
+//        sRequestQueue.add(new QueryRunner<>(context, query));
+//        query.onQueue(context);
+//      } else {
+//        query.onReject(context);
+//      }
+//    } else {
+//      sCurrentRequest = query;
+//      new QueryRunner<>(context, query).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//    }
+//  }
 
   /**
-   * Runs the {@link #runQuery(android.content.Context, IRequest, boolean)}
+   * Runs the {@link #runQuery(Context, Request, boolean)}
    * method with false <code>addToQueue</code> parameter.
    *
    * @param context context object
    * @param query the query to run against the server
    * @param <Return> the return type of the run thread
    */
-  public static synchronized <Progress, Return, RestInterface> void runQuery(Context context, IRequest<Progress, Return, RestInterface> query) {
-    runQuery(context, query, false);
-  }
+//  public static synchronized <Progress, Return, RestInterface> void runQuery(Context context, Request<Progress, Return, RestInterface> query) {
+//    runQuery(context, query, false);
+//  }
 
   /**
    * Returns the String ID of the currently running query.
@@ -145,13 +141,13 @@ public class RestfulWebService<T> {
    * or if the query did not specified an id.
    * @return the ID of the currently running query.
    */
-  public static String getCurrentQueryId() {
-    if (sCurrentQuery != null) {
-      return sCurrentQuery.getQueryID();
-    } else {
-      return null;
-    }
-  }
+//  public static String getCurrentQueryId() {
+//    if (sCurrentRequest != null) {
+//      return sCurrentRequest.getQueryID();
+//    } else {
+//      return null;
+//    }
+//  }
 
 //  protected static class QueryRunner<Progress, Result, RestInterface>
 //          extends AsyncTask<Void, Progress, Result> {
@@ -214,10 +210,10 @@ public class RestfulWebService<T> {
 //    }
 //
 //    private static synchronized void finished() {
-//      sCurrentQuery = null;
+//      sCurrentRequest = null;
 //      if (!sRequestQueue.isEmpty()) {
 //        QueryRunner<?, ?, ?> runner = sRequestQueue.poll();
-//        sCurrentQuery = runner.mQuery;
+//        sCurrentRequest = runner.mQuery;
 //        runner.execute();
 //      }
 //    }
