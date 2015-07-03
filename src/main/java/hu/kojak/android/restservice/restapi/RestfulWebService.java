@@ -1,15 +1,11 @@
 package hu.kojak.android.restservice.restapi;
 
-import android.content.Context;
-
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.Converter;
 
 public class RestfulWebService<T> {
 
-//  static Request sCurrentRequest = null;
-//  protected static Queue<Request> sRequestQueue = new ArrayDeque<>();
   private static RestfulWebService<?> INSTANCE = null;
 
   private final T mRestInterface;
@@ -92,136 +88,5 @@ public class RestfulWebService<T> {
               + ", but found: " + INSTANCE.mRestInterface.getClass().getName());
     }
   }
-
-  /**
-   * Runs a query against the server.
-   * If addToQueue is set to true and a request is already running
-   * then appends the request to waiting queue for later run.
-   *
-   * @param context context object
-   * @param query the query to run against the server
-   * @param addToQueue if true and a query is already running adds this query to run later, otherwise the query will
-   *                   be rejected
-   * @param <Return> the return type of the run thread
-   */
-//  public static synchronized <Progress, Return, RestInterface> void runQuery(Context context,
-//                                                                   Request<Progress, Return, RestInterface> query,
-//                                                                   boolean addToQueue) {
-//    if (sCurrentRequest != null) {
-//      if (addToQueue) {
-//        sRequestQueue.add(new QueryRunner<>(context, query));
-//        query.onQueue(context);
-//      } else {
-//        query.onReject(context);
-//      }
-//    } else {
-//      sCurrentRequest = query;
-//      new QueryRunner<>(context, query).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//    }
-//  }
-
-  /**
-   * Runs the {@link #runQuery(Context, Request, boolean)}
-   * method with false <code>addToQueue</code> parameter.
-   *
-   * @param context context object
-   * @param query the query to run against the server
-   * @param <Return> the return type of the run thread
-   */
-//  public static synchronized <Progress, Return, RestInterface> void runQuery(Context context, Request<Progress, Return, RestInterface> query) {
-//    runQuery(context, query, false);
-//  }
-
-  /**
-   * Returns the String ID of the currently running query.
-   * A query is in running state while it is in the run method. After returning from run(),
-   * the query is not in running state anymore.
-   *
-   * This function returns null in 2 cases: if there is no query running currently,
-   * or if the query did not specified an id.
-   * @return the ID of the currently running query.
-   */
-//  public static String getCurrentQueryId() {
-//    if (sCurrentRequest != null) {
-//      return sCurrentRequest.getQueryID();
-//    } else {
-//      return null;
-//    }
-//  }
-
-//  protected static class QueryRunner<Progress, Result, RestInterface>
-//          extends AsyncTask<Void, Progress, Result> {
-//
-//    private final Context mContext;
-//    private final IRequest<Progress, Result, RestInterface> mQuery;
-//    private Exception mException = null;
-//
-//    public QueryRunner(Context context, IRequest<Progress, Result, RestInterface> query) {
-//      mContext = context;
-//      mQuery = query;
-//      query.setProgressDelegate(new ProgressDelegate<Progress>() {
-//        @Override
-//        public void publish(Progress progress) {
-//          publishProgress(progress);
-//        }
-//      });
-//    }
-//
-//    @Override
-//    protected Result doInBackground(Void... params) {
-//      try {
-//        return mQuery.run(mContext, getService(mQuery.getRestClass()));
-//      } catch (Exception error) {
-//        mException = error;
-//        cancel(true);
-//      }
-//      return null;
-//    }
-//
-//    @Override
-//    protected void onPostExecute(Result result) {
-//      finished();
-//      mQuery.onPostExecute(mContext, result);
-//    }
-//
-//    @Override
-//    protected void onCancelled() {
-//      cancelled();
-//    }
-//
-//    @Override
-//    protected void onCancelled(Result result) {
-//      cancelled();
-//    }
-//
-//    @Override
-//    protected void onProgressUpdate(Progress... values) {
-//      mQuery.onProgressUpdate(values[0]);
-//    }
-//
-//    private void cancelled() {
-//      finished();
-//      if (mException != null) {
-//        mQuery.onException(mContext, mException);
-//      } else {
-//        mQuery.onCancelled(mContext);
-//      }
-//
-//    }
-//
-//    private static synchronized void finished() {
-//      sCurrentRequest = null;
-//      if (!sRequestQueue.isEmpty()) {
-//        QueryRunner<?, ?, ?> runner = sRequestQueue.poll();
-//        sCurrentRequest = runner.mQuery;
-//        runner.execute();
-//      }
-//    }
-//
-//    protected interface ProgressDelegate<Progress> {
-//      void publish(Progress progress);
-//    }
-//
-//  }
 
 }
