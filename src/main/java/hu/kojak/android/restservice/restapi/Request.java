@@ -1,14 +1,11 @@
 package hu.kojak.android.restservice.restapi;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public abstract class Request<Progress, Result, RestInterface>
-        extends AsyncTask<Void, Progress, Result> {
+        extends ApiAsyncTask<Void, Progress, Result> {
 
   private final Context mContext;
   private final Class<RestInterface> mRestClass;
@@ -35,16 +32,6 @@ public abstract class Request<Progress, Result, RestInterface>
   public final Context getContext() {
     return mContext;
   }
-
-  @TargetApi(11)
-  public final void exec() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    } else {
-      execute();
-    }
-  }
-
 
   @Override
   protected Result doInBackground(Void... params) {
