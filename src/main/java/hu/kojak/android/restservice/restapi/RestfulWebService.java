@@ -10,39 +10,38 @@ public class RestfulWebService<T> {
 
   private final T mRestInterface;
 
-  private RestfulWebService(String endPoint, Class<T> restInterface,
-                            Converter converter, RequestInterceptor interceptor) {
+  private RestfulWebService(Builder<T> builder) {
 
-    if (endPoint == null) {
+    if (builder.endPoint == null) {
       throw new RuntimeException("Endpoint cannot be null.");
     }
-    if (restInterface == null) {
+    if (builder.restInterface == null) {
       throw new RuntimeException("RestInterface cannot be null.");
     }
 
     RestAdapter.Builder restAdapter = new RestAdapter.Builder()
-            .setEndpoint(endPoint)
-            /*.setLogLevel(RestAdapter.LogLevel.FULL)*/;
+            .setEndpoint(builder.endPoint);
 
-    if (converter != null) {
-      restAdapter.setConverter(converter);
-    }
-    if (interceptor != null) {
-      restAdapter.setRequestInterceptor(interceptor);
+    if (builder.debug) {
+      restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
     }
 
-    mRestInterface = restAdapter.build().create(restInterface);
+    if (builder.converter != null) {
+      restAdapter.setConverter(builder.converter);
+    }
+    if (builder.interceptor != null) {
+      restAdapter.setRequestInterceptor(builder.interceptor);
+    }
+
+    mRestInterface = restAdapter.build().create(builder.restInterface);
   }
 
 
-  private static synchronized<T> void createInstance(String endPoint,
-                                                     Class<T> restInterface,
-                                                     Converter converter,
-                                                     RequestInterceptor interceptor) {
+  private static synchronized<T> void createInstance(Builder<T> builder) {
     if (INSTANCE != null) {
       throw new RuntimeException("Instance already created, cannot create it more than once.");
     } else {
-      INSTANCE = new RestfulWebService<>(endPoint, restInterface, converter, interceptor);
+      INSTANCE = new RestfulWebService<>(builder);
     }
   }
 
@@ -50,8 +49,10 @@ public class RestfulWebService<T> {
     private final String endPoint;
     private final Class<T> restInterface;
 
+
     private RequestInterceptor interceptor = null;
     private Converter converter = null;
+    private boolean debug = false;
 
     public Builder(String endPoint, Class<T> restInterface) {
       this.endPoint = endPoint;
@@ -68,8 +69,13 @@ public class RestfulWebService<T> {
       return this;
     }
 
+    public Builder setDebug(boolean debug) {
+      this.debug = debug;
+      return this;
+    }
+
     public void build() {
-      RestfulWebService.createInstance(endPoint, restInterface, converter, interceptor);
+      RestfulWebService.createInstance(this);
     }
 
   }
