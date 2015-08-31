@@ -26,10 +26,6 @@ public abstract class SimpleRequest<Progress, Return, RestInterface>
   }
 
   @Override
-  public void onException(Context context, Exception error) {
-  }
-
-  @Override
   public void onFinally(Context context) {
   }
 
