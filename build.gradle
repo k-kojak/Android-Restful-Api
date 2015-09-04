@@ -29,5 +29,5 @@ dependencies {
     testCompile 'org.assertj:assertj-core:1.7.1'
     testCompile 'junit:junit:4.12'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
-    compile 'com.android.support:support-annotations:23.0.0'
+    compile 'com.android.support:support-annotations:23.0.1'
 }
