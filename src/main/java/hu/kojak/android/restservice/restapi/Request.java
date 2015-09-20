@@ -96,7 +96,7 @@ public abstract class Request<Progress, Result, RestInterface>
    * Called if a retrofit error occured while executing request.
    * This method is called on the UI thread.
    */
-  public abstract void onException(Context context, Exception error);
+  public abstract void onException(Context context, Exception exception);
 
 
   /**
