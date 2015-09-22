@@ -8,8 +8,8 @@ import android.util.Log;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
- * This class has an exec() method, which calls the appropriate execute() method to be API
- * level safe!
+ * This class has an exec() method, which calls the
+ * execute() or executeOnExecutor() method depending on the API level.
  */
 public abstract class ApiAsyncTask<Params, Progress, Result>
         extends AsyncTask<Params, Progress, Result> {
@@ -17,7 +17,7 @@ public abstract class ApiAsyncTask<Params, Progress, Result>
   @TargetApi(11)
   @SuppressWarnings("unchecked")
   /**
-   * Returns true if execution started without problem, false if cannot start asynctask because
+   * Returns true if execution started without problem, false if cannot start AsyncTask because
    * pool is full.
    */
   public final boolean exec(Params... params) {
@@ -29,7 +29,7 @@ public abstract class ApiAsyncTask<Params, Progress, Result>
       }
       return true;
     } catch (RejectedExecutionException e) {
-      Log.d("kojak", "thread pool is full :(", e);
+      Log.d("retrofit-wrapper", "thread pool is full :(", e);
       return false;
     }
   }

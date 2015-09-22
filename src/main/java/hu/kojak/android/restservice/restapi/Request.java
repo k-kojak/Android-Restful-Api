@@ -36,7 +36,7 @@ public abstract class Request<Progress, Result, RestInterface>
   @Override
   protected Result doInBackground(Void... params) {
     try {
-      return run(mContext, RestfulWebService.getService(mRestClass));
+      return run(mContext, AndroidRetrofitRestAdapter.getService(mRestClass));
     } catch (Exception e) {
       mException = e;
       cancel(true);
