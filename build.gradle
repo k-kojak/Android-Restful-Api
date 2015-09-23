@@ -6,7 +6,7 @@ android {
 
     lintOptions {
         abortOnError true
-        ignore 'InvalidPackage','UseCompoundDrawables'
+        ignore 'InvalidPackage','UseCompoundDrawables','AllowBackup'
         warningsAsErrors true
     }
 
