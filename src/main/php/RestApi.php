@@ -20,7 +20,7 @@ class WebService {
    * Property: file
    * Stores the input of the PUT request
    */
-  protected $data = Null;
+  protected $data = NULL;
   
   private $get = array();
   private $post = array();

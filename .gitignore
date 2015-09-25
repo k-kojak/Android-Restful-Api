@@ -4,6 +4,8 @@
 !libs/
 !src/
 
+!README.md
+!lint.xml
 !build.gradle
 !LICENSE
 !.gitignore

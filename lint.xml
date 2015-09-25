@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="IconDensities">
+        <ignore path="src/main/res/drawable-xxxhdpi"/>
+    </issue>
+	
+	<!-- TEMPORARY suppress: due to data binding feature: gradle thinks the resource is unused! -->
+    <issue id="UnusedResources">
+        <ignore path="src/main/res/layout/welcome_fragment.xml" />
+    </issue>
+	
+</lint>

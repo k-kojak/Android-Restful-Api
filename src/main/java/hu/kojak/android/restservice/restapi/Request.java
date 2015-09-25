@@ -2,41 +2,24 @@ package hu.kojak.android.restservice.restapi;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-public abstract class Request<Progress, Result, RestInterface>
-        extends ApiAsyncTask<Void, Progress, Result> {
+public abstract class Request<Params, Progress, Result, RestInterface>
+        extends ApiAsyncTask<Params, Progress, Result> {
 
   private final Context mContext;
   private final Class<RestInterface> mRestClass;
-  private final String mQueryID;
 
   private Exception mException = null;
 
-  public Request(@NonNull Context context, @NonNull Class<RestInterface> restInterfaceClass,
-                 @Nullable String queryID) {
-
+  public Request(@NonNull Context context, @NonNull Class<RestInterface> restInterfaceClass) {
     mContext = context;
     mRestClass = restInterfaceClass;
-    mQueryID = queryID;
-  }
-
-  final Class<RestInterface> getRestClass() {
-    return mRestClass;
-  }
-
-  public final String getQueryID() {
-    return mQueryID;
-  }
-
-  public final Context getContext() {
-    return mContext;
   }
 
   @Override
-  protected Result doInBackground(Void... params) {
+  protected Result doInBackground(Params... params) {
     try {
-      return run(mContext, AndroidRetrofitRestAdapter.getService(mRestClass));
+      return run(mContext, AndroidRetrofitRestAdapter.getService(mRestClass), params);
     } catch (Exception e) {
       mException = e;
       cancel(true);
@@ -72,7 +55,7 @@ public abstract class Request<Progress, Result, RestInterface>
   /**
    * Runs the request with the given restService.
    */
-  public abstract Result run(Context context, RestInterface restService) throws Exception;
+  public abstract Result run(Context context, RestInterface restService, Params... params) throws Exception;
 
   /**
    * Called after a request finished successfully and no error occured.
