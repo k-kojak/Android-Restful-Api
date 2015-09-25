@@ -129,12 +129,12 @@ public class RequestTest {
     assertThat(test.result).isEqualTo("body text");
   }
 
-  private static class TestRequest extends Request<Void, String, Methods> {
+  private static class TestRequest extends Request<Void, Void, String, Methods> {
 
     private final boolean cancelOnRun;
 
     public TestRequest(Context context, boolean cancelOnRun) {
-      super(context, Methods.class, "");
+      super(context, Methods.class);
       this.cancelOnRun = cancelOnRun;
     }
 
@@ -143,7 +143,7 @@ public class RequestTest {
     private String result = null;
 
     @Override
-    public String run(Context context, Methods restService) throws Exception {
+    public String run(Context context, Methods restService, Void... params) throws Exception {
       callSequence += "run";
       if (cancelOnRun) {
         cancel(true);
