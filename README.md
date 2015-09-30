@@ -10,14 +10,14 @@ When `Retrofit 2.0` becomes a stable, this library probably will be updated.
 Usage - Android
 ---------------
 Let's assume we have a Retrofit REST interface like this:
-```android
+```java
 public interface IRestInterface {
   @GET("/user/get/age/{user_id}")
   Integer getUserAge(@Path("user_id") int userId);
 }
 ```
 Probably you want to do this in your custom Application's onCreate method
-```Android
+```java
 // build your Retrofit adapter as you would do it normally
 RestAdapter adapter = new RestAdapter.Builder()
         .setEndpoint("http://example.com")
@@ -27,7 +27,7 @@ RestAdapter adapter = new RestAdapter.Builder()
 AndroidRetrofitRestAdapter.putAdapter(IRestInterface.class, adapter);
 ```
 Create your custom request with extending `Request` class
-```Android
+```java
 // the first 3 generic types stands for the AsynTask's generic types (Params, Progress, Result)
 // and the last one is the Class type of the RestInterface you would like to get when using this AsyncTask
 public class AgeRequest extends Request<Void, Void, Integer, IRestInterface> {
@@ -71,13 +71,13 @@ public class AgeRequest extends Request<Void, Void, Integer, IRestInterface> {
 
 Or alternatively you can extend the `SimpleRequest` class where some of the functions have a stub implementation,
 so you only have to implement these ones:
-```android
+```java
 public abstract Result run(Context context, RestInterface restService, Params... params) throws Exception;
 // and 
 public abstract void onException(Context context, Exception exception);
 ```
 Then just call your `AsyncTask` as you would normally do:
-```Android
+```java
   AgeRequest request = new AgeRequest(getContext());
   // this will call executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params) if API >= 11
   // and will call execute(params) if API < 11
